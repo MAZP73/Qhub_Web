@@ -63,7 +63,7 @@ export function ReconnectBanner() {
     </div>}
       {open && isAdmin && <CredentialsDialog title="Reconectar con Qhub" intro="Escribe tu cuenta de Qhub. Guardamos la conexión para que no te la volvamos a pedir." confirmLabel="Conectar"
         rememberLabel="Guardar la conexión (solo la escribes esta vez)" onSubmit={connect} onCancel={() => setOpen(false)}
-        onForgot={() => navigate('/qhub/recuperar')} onRegister={() => navigate('/connect?tab=crear')} />}
+        onForgot={() => navigate('/qhub/recuperar')} />}
     </>
   );
 }

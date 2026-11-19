@@ -109,8 +109,8 @@ export function SettingsPage() {
           </div>
         </Panel>
       </div>
-      {dialog === 'connect' && <CredentialsDialog title="Conectar tu cuenta de Qhub" intro="Lo haces una sola vez: validamos tu cuenta, la guardamos en el servidor y después entras directo." confirmLabel="Conectar y publicar" onSubmit={connectAndPublish} onCancel={() => setDialog(null)} onForgot={() => navigate('/qhub/recuperar')} onRegister={() => navigate('/connect?tab=crear')} />}
-      {dialog === 'server' && <CredentialsDialog title="Reiniciar la conexión con Qhub" intro="Escribe tu cuenta de Qhub: la validamos, reconectamos y la guardamos en el servidor para que todo el equipo se conecte solo." confirmLabel="Reiniciar" onSubmit={restart} onCancel={() => setDialog(null)} onForgot={() => navigate('/qhub/recuperar')} onRegister={() => navigate('/connect?tab=crear')} />}
+      {dialog === 'connect' && <CredentialsDialog title="Conectar tu cuenta de Qhub" intro="Lo haces una sola vez: validamos tu cuenta, la guardamos en el servidor y después entras directo." confirmLabel="Conectar y publicar" onSubmit={connectAndPublish} onCancel={() => setDialog(null)} onForgot={() => navigate('/qhub/recuperar')} />}
+      {dialog === 'server' && <CredentialsDialog title="Reiniciar la conexión con Qhub" intro="Escribe tu cuenta de Qhub: la validamos, reconectamos y la guardamos en el servidor para que todo el equipo se conecte solo." confirmLabel="Reiniciar" onSubmit={restart} onCancel={() => setDialog(null)} onForgot={() => navigate('/qhub/recuperar')} />}
       {dialog === 'unpublish' && <ConfirmDialog title="Dejar de publicar" message={`El público dejará de ver ${space}. Los turnos ya sacados se conservan.`} confirmLabel="Dejar de publicar" danger={false} onCancel={() => setDialog(null)} onConfirm={() => void unpublish()} />}
       {dialog === 'forget' && <ConfirmDialog title="Olvidar la conexión guardada" message={`La próxima vez tendrás que conectar tu cuenta de Qhub otra vez y ${space} dejará de verse en la app móvil.`} confirmLabel="Olvidar conexión" onCancel={() => setDialog(null)} onConfirm={() => void forget()} />}
     </div>

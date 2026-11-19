@@ -4,7 +4,6 @@ import { useSession } from './container';
 import { resolveRedirect } from './resolve-redirect';
 import { LoginPage } from '@/features/auth/LoginPage';
 const SetupPage = lazy(() => import('@/features/auth/SetupPage').then((m) => ({ default: m.SetupPage })));
-const ConnectPage = lazy(() => import('@/features/qhub/ConnectPage').then((m) => ({ default: m.ConnectPage })));
 const QhubRequestResetPage = lazy(() => import('@/features/qhub/QhubRequestResetPage').then((m) => ({ default: m.QhubRequestResetPage })));
 const QhubResetPasswordPage = lazy(() => import('@/features/qhub/QhubResetPasswordPage').then((m) => ({ default: m.QhubResetPasswordPage })));
 const AppShell = lazy(() => import('@/features/shell/AppShell').then((m) => ({ default: m.AppShell })));
@@ -35,10 +34,10 @@ function Gate() {
   // Mientras se conecta sola con la conexión guardada (fuera de la pantalla de conectar) se muestra la carga, no se pide nada.
   // En /invitacion no: al aceptar, la conexión automática arranca mientras la página sigue terminando (mostrar la contraseña, ir a /inicio);
   // si la carga la desmontara, la página volvería sola con la invitación ya usada y mostraría «No pudimos abrir esta invitación».
-  const autoConnecting = connection.status === 'connecting' && !!connection.auto && pathname !== '/connect' && pathname !== '/invitacion';
+  const autoConnecting = connection.status === 'connecting' && !!connection.auto && pathname !== '/invitacion';
   const loading = auth.status === 'loading' || (signedIn && (mfa === 'checking' || (mfa === 'ok' && (memberships.status === 'loading' || autoConnecting))));
   const target = resolveRedirect({
-    location: pathname + search,              // incluye el query (p. ej. /connect?tab=crear); resolveRedirect normaliza el pathname
+    location: pathname + search,              // incluye el query ; resolveRedirect normaliza el pathname
 
     authLoading: auth.status === 'loading',
     signedIn,
@@ -66,7 +65,6 @@ export function AppRoutes() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/confirmar" element={<ConfirmPage />} />
         <Route path="/setup" element={<SetupPage />} />
-        <Route path="/connect" element={<ConnectPage />} />
         <Route path="/invitacion" element={<InvitationPage />} />
         <Route path="/restablecer" element={<ResetPasswordPage />} />
         <Route path="/qhub/recuperar" element={<QhubRequestResetPage />} />
