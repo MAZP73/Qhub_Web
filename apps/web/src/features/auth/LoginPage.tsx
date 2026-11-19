@@ -2,6 +2,7 @@ import { useState, type FormEvent } from 'react';
 import type { Failure } from '@qhub/core';
 import { Button, Checkbox, cx, EmailField, Icon, Logo, Notice, StrengthMeter, TextField, GeneratePassword } from '@/shared/ui';
 import { LoginShowcase } from './LoginShowcase';
+import { LANDING_URL } from '@/app/links';
 import { useContainer, useSession } from '@/app/container';
 import { CONFIRMED_KEY, REMOVED_KEY } from '@/features/session/app-session';
 import { passwordStrength, validateEmail, validateOrgName, validatePassword, validatePersonName } from '@qhub/core';
@@ -92,7 +93,10 @@ export function LoginPage() {
   return (
     <div className="grid min-h-full grid-cols-1 md:grid-cols-[3fr_minmax(440px,2fr)]">
       <main id="contenido" className="flex min-h-full flex-col bg-layer-01 px-6 py-8 sm:px-12 md:order-2 md:px-16">
-        <Logo height={32} />
+        <div className="flex items-center justify-between gap-4">
+          <Logo height={32} />
+          <a href={LANDING_URL} className="inline-flex items-center gap-1 no-underline"><Icon name="chevron-left" />Volver al inicio</a>
+        </div>
         <form className="my-auto flex w-full max-w-[460px] flex-col gap-4 py-10" onSubmit={(e) => void submit(e)} noValidate aria-label={TITLE[mode]}>
           <div>
             <h1 className="t-h1 mb-2">{TITLE[mode]}{mode === 'login' && <> en <span className="font-semibold">Qhub</span></>}</h1>

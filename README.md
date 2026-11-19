@@ -31,6 +31,7 @@ Todas son **públicas** (`VITE_*`, van en el bundle). Ponlas en el `.env` de la 
 | `VITE_QHUB_WS_BASE_URL` | WebSocket de la API Qhub (`wss://…`) |
 | `VITE_SUPABASE_URL` | URL del proyecto Supabase (`https://xxxx.supabase.co`) |
 | `VITE_SUPABASE_PUBLISHABLE_KEY` | anon/publishable key (pública) |
+| `VITE_QHUB_LANDING_URL` | (opcional) URL del sitio principal al que vuelve «Volver al inicio»; por defecto `https://qhub-landing.vercel.app` |
 
 ## Desarrollo y build (en Docker, sin instalar Node en el host)
 
