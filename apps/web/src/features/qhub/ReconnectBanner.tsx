@@ -16,7 +16,8 @@ export function ReconnectBanner() {
   const navigate = useNavigate();
   const [busy, setBusy] = useState(false);
   const isAdmin = can(session.membership?.role, 'settings.manage');
-  const needed = !!session.membership?.organization.qhubConnected && connection.status === 'disconnected';
+  const everConnected = !!session.membership?.organization.qhubConnected;
+  const needed = !!session.membership && connection.status === 'disconnected';      // también si nunca se conectó: ya no hay pantalla de conectar
   // administrador conectado solo en este dispositivo: la conexión no está en el servidor y los demás integrantes no pueden conectarse
   const unsaved = isAdmin && !!session.membership?.organization.qhubConnected && !session.membership.organization.linked && connection.status === 'connected';
   if (!needed && !unsaved) return null;
@@ -43,8 +44,8 @@ export function ReconnectBanner() {
     {needed && <div role="alert" className="mb-4 flex flex-wrap items-center gap-3 border border-border-subtle border-l-[3px] border-l-support-warning bg-layer-01 p-4 print:hidden">
       <span className="text-support-warning"><Icon name="warning" /></span>
       <div className="min-w-0 flex-1">
-        <div className="font-medium">Falta reconectar con Qhub</div>
-        <div className="t-caption text-text-secondary">{(connection.status === 'disconnected' && connection.reason?.message) || 'Para cargar tus colas y turnos necesitamos volver a conectar tu cuenta de Qhub.'}</div>
+        <div className="font-medium">{everConnected ? 'Falta reconectar con Qhub' : 'Falta conectar con Qhub'}</div>
+        <div className="t-caption text-text-secondary">{(connection.status === 'disconnected' && connection.reason?.message) || (everConnected ? 'Para cargar tus colas y turnos necesitamos volver a conectar tu cuenta de Qhub.' : 'Para gestionar colas y turnos hace falta conectar tu cuenta de Qhub.')}</div>
       </div>
       <Button size="sm" loading={busy} onClick={() => void onReconnect()}>{isAdmin ? 'Ir a Ajustes' : 'Reconectar'}</Button>
     </div>}
