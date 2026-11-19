@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { unwrap, validateOrgName } from '@qhub/core';
 import { isReady } from '@qhub/api-client';
@@ -13,6 +13,7 @@ export function SettingsPage() {
   const { session } = useSession();
   const toast = useToast();
   const navigate = useNavigate();
+  const { hash } = useLocation();
   const org = session.membership!.organization;
   const personal = org.kind === 'persona';
   const space = personal ? 'tu cuenta' : 'tu organización';
@@ -24,6 +25,13 @@ export function SettingsPage() {
   const device = useQuery({ queryKey: ['device-connection', org.id], queryFn: () => session.hasDeviceConnection() });
   const saved = org.linked || !!device.data;
   const ready = useQuery({ queryKey: ['health'], queryFn: async () => unwrap(await health.ready()) });
+
+  // Llegó desde el aviso «Falta reconectar con Qhub»: baja a «Conexión con Qhub» y abre la ventana para restablecerla.
+  useEffect(() => {
+    if (hash !== '#conexion') return;
+    document.getElementById('conexion')?.scrollIntoView({ block: 'center' });
+    setDialog('server');
+  }, [hash]);
 
   async function save() {
     const e = validateOrgName(name, personal ? 'tu cuenta' : 'la organización');
@@ -95,7 +103,7 @@ export function SettingsPage() {
               : <Button icon="arrow-right" loading={busy} onClick={() => (org.linked ? void publish() : setDialog('connect'))}>Publicar en la app móvil</Button>}</div>
           </div>
         </Panel>
-        <Panel title="Conexión con Qhub">
+        <div id="conexion" className="scroll-mt-6"><Panel title="Conexión con Qhub">
           <div className="flex flex-col gap-4">
             <Notice kind={org.linked ? 'success' : 'warning'} title={org.linked ? 'La conexión con Qhub está guardada en el servidor.' : device.data ? 'La conexión con Qhub está guardada en este dispositivo.' : 'La conexión con Qhub es solo de esta sesión.'}
               message={org.linked ? 'El equipo y tus otros dispositivos se conectan solos al iniciar sesión.' : device.data ? 'Solo funciona aquí: el resto del equipo y tus otros dispositivos no podrán conectarse. Pulsa «Reiniciar conexión» para guardarla en el servidor.' : 'Guárdala para no tener que conectar tu cuenta cada vez que inicies sesión.'} />
@@ -107,7 +115,7 @@ export function SettingsPage() {
               {saved && <Button kind="secondary" loading={busy} onClick={() => setDialog('forget')}>Olvidar la conexión guardada</Button>}
             </div>
           </div>
-        </Panel>
+        </Panel></div>
       </div>
       {dialog === 'connect' && <CredentialsDialog title="Conectar tu cuenta de Qhub" intro="Lo haces una sola vez: validamos tu cuenta, la guardamos en el servidor y después entras directo." confirmLabel="Conectar y publicar" onSubmit={connectAndPublish} onCancel={() => setDialog(null)} onForgot={() => navigate('/qhub/recuperar')} />}
       {dialog === 'server' && <CredentialsDialog title="Reiniciar la conexión con Qhub" intro="Escribe tu cuenta de Qhub: la validamos, reconectamos y la guardamos en el servidor para que todo el equipo se conecte solo." confirmLabel="Reiniciar" onSubmit={restart} onCancel={() => setDialog(null)} onForgot={() => navigate('/qhub/recuperar')} />}
