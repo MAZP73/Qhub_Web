@@ -1,6 +1,6 @@
 import type { Ticket } from '@qhub/api-client';
 import { computeStats, type HistoryStats } from '@/features/history/history';
-import { formatDuration, formatPercent, toCsv } from '@qhub/core';
+import { csvDate, formatDuration, formatPercent, toCsv } from '@qhub/core';
 
 const DAY = ['dom', 'lun', 'mar', 'mié', 'jue', 'vie', 'sáb'] as const;
 const sameDay = (a: Date, b: Date) => a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
@@ -92,11 +92,11 @@ export const tableToCsv = (t: TableData): string => toCsv([t.columns, ...t.rows]
 
 /** Reporte completo del Dashboard en CSV: encabezado, resumen del periodo, comparación y una sección por gráfica. */
 export function reportToCsv(o: { organization: string; periodLabel: string; now: Date; stats: HistoryStats; previous: HistoryStats | null; sections: ReadonlyArray<{ title: string; table: TableData }> }): string {
-  const rows: Array<string | unknown[]> = [['Reporte', o.organization], ['Periodo', o.periodLabel], ['Generado', o.now.toISOString()], '', 'Resumen,valor,periodo anterior'];
+  const rows: Array<string | unknown[]> = [['Reporte de Qhub', o.organization], ['Periodo', o.periodLabel], ['Generado', csvDate(o.now)], '', ['Resumen', 'Valor', 'Periodo anterior']];
   const kv: Array<[string, unknown, unknown]> = [
     ['Turnos', o.stats.total, o.previous?.total], ['Atendidos', o.stats.attended, o.previous?.attended], ['En espera', o.stats.waiting, o.previous?.waiting], ['No-show', o.stats.noShow, o.previous?.noShow],
-    ['Cancelados', o.stats.cancelled, o.previous?.cancelled], ['Espera promedio (min:seg)', formatDuration(o.stats.avgWaitMs), o.previous ? formatDuration(o.previous.avgWaitMs) : undefined],
-    ['Atención promedio (min:seg)', formatDuration(o.stats.avgServiceMs), o.previous ? formatDuration(o.previous.avgServiceMs) : undefined], ['Tasa de no-show', formatPercent(o.stats.noShowRate), o.previous ? formatPercent(o.previous.noShowRate) : undefined],
+    ['Cancelados', o.stats.cancelled, o.previous?.cancelled], ['Espera promedio (min:seg)', formatDuration(o.stats.avgWaitMs), o.previous?.avgWaitMs != null ? formatDuration(o.previous.avgWaitMs) : undefined],
+    ['Atención promedio (min:seg)', formatDuration(o.stats.avgServiceMs), o.previous?.avgServiceMs != null ? formatDuration(o.previous.avgServiceMs) : undefined], ['Tasa de no-show', formatPercent(o.stats.noShowRate), o.previous ? formatPercent(o.previous.noShowRate) : undefined],
   ];
   rows.push(...kv);
   for (const s of o.sections) rows.push('', [s.title], s.table.columns, ...s.table.rows);

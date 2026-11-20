@@ -1,5 +1,5 @@
-import { err, ok, formatTurnNumber, type Result, toCsv, fromDateInput } from '@qhub/core';
-import type { Ticket, TicketRepository } from '@qhub/api-client';
+import { csvDate, err, ok, formatTurnNumber, type Result, toCsv, fromDateInput } from '@qhub/core';
+import { TICKET_STATUS_LABEL, type Ticket, type TicketRepository } from '@qhub/api-client';
 
 export interface HistoryStats {
   total: number; attended: number; noShow: number; cancelled: number; waiting: number;
@@ -28,10 +28,10 @@ export function computeStats(tickets: readonly Ticket[]): HistoryStats {
 
 export function ticketsToCsv(tickets: readonly Ticket[], queueNames: Record<string, string> = {}, prefixes: Record<string, string> = {}): string {
   return toCsv([
-    'turno,cola,cliente,franja,estado,llegada,atencion,finalizacion,agente',
+    ['Turno', 'Cola', 'Cliente', 'Franja', 'Estado', 'Llegada', 'Inicio de atención', 'Finalización', 'Agente'],
     ...tickets.map((t) => [
-      formatTurnNumber(t.number, prefixes[t.queueId] ?? 'A'), queueNames[t.queueId] ?? t.queueId, t.userId, t.slotStart.toISOString(), t.status,
-      t.createdAt.toISOString(), t.calledAt?.toISOString(), t.finishedAt?.toISOString(), t.agentId,
+      formatTurnNumber(t.number, prefixes[t.queueId] ?? 'A'), queueNames[t.queueId] ?? t.queueId, t.userId, csvDate(t.slotStart), TICKET_STATUS_LABEL[t.status] ?? t.status,
+      csvDate(t.createdAt), csvDate(t.calledAt), csvDate(t.finishedAt), t.agentId,
     ]),
   ]);
 }

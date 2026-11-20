@@ -36,3 +36,28 @@
   :root:not([data-theme='light']) .qh-logo-light { display: none; }
   :root:not([data-theme='light']) .qh-logo-dark { display: inline-flex; }
 }
+
+/* ───── Impresión / PDF del reporte ─────
+   En pantalla el contenedor `.print-doc` no cambia nada. Al imprimir se vuelve una tabla: su encabezado (logo de Qhub + datos del reporte)
+   y su pie se repiten en cada hoja y hacen de margen, así que la página puede tener `@page { margin: 0 }`: sin margen, el navegador no
+   escribe arriba y abajo la dirección de la página, la fecha ni el título, y en su lugar sale el logo de Qhub. */
+.print-doc, .print-doc > tbody, .print-doc > tbody > tr, .print-doc > tbody > tr > td { display: block; }
+.print-doc > thead, .print-doc > tfoot { display: none; }
+@media print {
+  @page { size: A4; margin: 0; }
+  html, body, #root { height: auto !important; overflow: visible !important; background: #fff !important; }
+  * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .print-doc { display: table; width: 100%; border-collapse: collapse; }
+  .print-doc > thead { display: table-header-group; }
+  .print-doc > tfoot { display: table-footer-group; }
+  .print-doc > tbody { display: table-row-group; }
+  .print-doc > thead > tr, .print-doc > tfoot > tr, .print-doc > tbody > tr { display: table-row; }
+  .print-doc > thead > tr > td, .print-doc > tfoot > tr > td, .print-doc > tbody > tr > td { display: table-cell; padding: 0 14mm; }
+  .print-doc > thead > tr > td { padding-top: 12mm; padding-bottom: 5mm; }
+  .print-doc > tfoot > tr > td { height: 14mm; padding-top: 0; padding-bottom: 0; }
+  .print-doc tr, .print-keep { break-inside: avoid; page-break-inside: avoid; }
+  main, #contenido { background: #fff !important; }
+  .toast, [role='status'].toast, [aria-live] .toast { display: none !important; }
+  /* tablas de datos más compactas para que quepan más en cada hoja */
+  .print-doc table th, .print-doc table td { padding-top: 3px !important; padding-bottom: 3px !important; height: auto !important; min-height: 0 !important; }
+}

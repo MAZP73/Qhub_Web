@@ -131,7 +131,7 @@ export interface TableView { columns: string[]; rows: Array<Array<string | numbe
 /** Los mismos datos de una gráfica, en tabla (lectura exacta, copiar y accesibilidad). */
 export function DataTable({ label, columns, rows }: { label: string } & TableView) {
   return (
-    <div className="max-h-[320px] overflow-auto border border-border-subtle">
+    <div className="max-h-[320px] overflow-auto border border-border-subtle print:max-h-none print:overflow-visible">
       <Table label={label}>
         <thead><tr>{columns.map((c, i) => <Th key={c} num={i > 0}>{c}</Th>)}</tr></thead>
         <tbody>{rows.map((r, ri) => <tr key={ri}>{r.map((cell, ci) => <Td key={ci} num={ci > 0} className={ci > 0 ? 'font-mono' : ''}>{cell}</Td>)}</tr>)}</tbody>
@@ -153,10 +153,10 @@ export function Segmented({ options, value, onChange, label }: { options: Readon
 }
 
 /** Panel de una gráfica: título y descripción, interruptor Gráfico/Tabla y descarga de sus datos en CSV. */
-export function ChartPanel({ title, subtitle, chart, table, onCsv, wide }: { title: string; subtitle?: string; chart: ReactNode; table: TableView; onCsv?: () => void; wide?: boolean }) {
+export function ChartPanel({ title, subtitle, chart, table, onCsv, wide, printWide }: { title: string; subtitle?: string; chart: ReactNode; table: TableView; onCsv?: () => void; wide?: boolean; printWide?: boolean }) {
   const [view, setView] = useState('grafico');
   return (
-    <div className={cx('min-w-0', wide && 'lg:col-span-2')}>
+    <div className={cx('print-keep min-w-0', wide && 'lg:col-span-2', (wide || printWide) && 'print:col-span-2')}>
       <Panel>
         <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
           <div className="min-w-0"><h2 className="t-h3 m-0">{title}</h2>{subtitle && <p className="t-caption m-0 text-text-secondary">{subtitle}</p>}</div>

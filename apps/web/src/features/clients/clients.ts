@@ -1,5 +1,5 @@
 import type { Result } from '@qhub/core';
-import { toCsv } from '@qhub/core';
+import { csvDate, toCsv } from '@qhub/core';
 
 /** Persona que usa la organización desde la app móvil. */
 export interface Client {
@@ -66,7 +66,7 @@ export function clientStats(list: readonly Client[], now = new Date()): ClientSt
 /** CSV de clientes; el contacto solo viaja si el rol lo recibió (admin). */
 export function clientsToCsv(list: readonly Client[]): string {
   return toCsv([
-    'nombre,correo,telefono,primera_vez,ultimo_turno,turnos,atendidos,no_show,cancelados,sigue,bloqueado',
-    ...list.map((c) => [clientName(c), c.email, c.phone, c.firstSeen?.toISOString(), c.lastTicket?.toISOString(), c.tickets, c.served, c.noShow, c.cancelled, c.follows ? 'si' : 'no', c.blocked ? 'si' : 'no']),
+    ['Nombre', 'Correo', 'Teléfono', 'Primera vez', 'Último turno', 'Turnos', 'Atendidos', 'No-show', 'Cancelados', 'Sigue a la organización', 'Bloqueado'],
+    ...list.map((c) => [clientName(c), c.email, c.phone, csvDate(c.firstSeen), csvDate(c.lastTicket), c.tickets, c.served, c.noShow, c.cancelled, c.follows ? 'Sí' : 'No', c.blocked ? 'Sí' : 'No']),
   ]);
 }
